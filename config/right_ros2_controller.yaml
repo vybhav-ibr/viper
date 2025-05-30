@@ -1,0 +1,37 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 1000
+    
+right_joint_trajectory_controller:
+  ros__parameters:
+    type: joint_trajectory_controller/JointTrajectoryController
+
+    joints:
+      - right_waist
+      - right_shoulder
+      - right_elbow
+      - right_forearm_roll
+      - right_wrist_angle
+      - right_wrist_rotate
+      - right_left_finger
+      - right_right_finger
+
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 200.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: True
+    deduce_states_from_derivatives: True
+    open_loop_control: False
+    allow_integration_in_goal_trajectories: True
+    constraints:
+      stopped_velocity_tolerance: 0.01
+      goal_time: 0.0
+right_joint_state_broadcaster:
+  ros__parameters:
+    state_publish_rate: 500.0
+    type: joint_state_broadcaster/JointStateBroadcaster
+

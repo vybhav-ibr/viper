@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro"
+  name="vx300s">
+
+  <xacro:arg name="left_prefix" default="left" />
+  <xacro:arg name="right_prefix" default="right" />
+
+  <!-- Robot -->
+  <xacro:include filename="$(find viperX300_description)/urdf/vx300s_macro.xacro" />
+  <xacro:vx300s prefix="$(arg left_prefix)" hw_interface="hardware_interface/EffortJointInterface" />
+  <xacro:vx300s prefix="$(arg right_prefix)" hw_interface="hardware_interface/EffortJointInterface" />
+
+  <link name="world" />
+
+  <joint name="$(arg left_prefix)_to_world" type="fixed">
+    <parent link="world" />
+    <child link="$(arg left_prefix)_base_link" />
+    <origin xyz="-0.4 0 0.7" rpy=" 0 0 1.57"/>
+  </joint>
+
+  <joint name="$(arg right_prefix)_to_world" type="fixed">
+    <parent link="world" />
+    <child link="$(arg right_prefix)_base_link" />
+    <origin xyz="0.4 0 0.7" rpy=" 0 0 1.57"/>
+  </joint>
+
+</robot>

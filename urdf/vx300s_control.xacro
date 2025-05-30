@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+<ros2_control name="${prefix}_GazeboSimSystem" type="system">
+	<hardware>
+   		<plugin>gz_ros2_control/GazeboSimSystem</plugin>
+	</hardware>
+        
+        <xacro:macro name="actuated_joints" params="name">
+        <joint name="${name}">
+                <command_interface name="position">
+                    <!--param name="min">0</param>
+                    <param name="max">3.14</param-->
+                </command_interface>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <!--state_interface name="effort"/-->
+            </joint>
+        </xacro:macro>
+
+
+        <xacro:actuated_joints name="${prefix}_shoulder"/>
+        <xacro:actuated_joints name="${prefix}_waist"/>
+        <xacro:actuated_joints name="${prefix}_elbow"/>
+        <xacro:actuated_joints name="${prefix}_forearm_roll"/>
+        <xacro:actuated_joints name="${prefix}_wrist_angle"/>
+        <xacro:actuated_joints name="${prefix}_wrist_rotate"/>
+        <!--xacro:actuated_joints name="${prefix}_ee_arm"/>
+        <xacro:actuated_joints name="${prefix}_gripper_bar"/>
+        <xacro:actuated_joints name="${prefix}_ee_bar"/-->
+        <xacro:actuated_joints name="${prefix}_left_finger"/>
+        <xacro:actuated_joints name="${prefix}_right_finger"/>
+        <!--xacro:actuated_joints name="${prefix}_ee_gripper"/-->
+        
+        <xacro:macro name="unactuated_joints" params="name">
+            <joint name="${name}">
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <!--state_interface name="effort"/-->
+            </joint>
+        </xacro:macro>
+        
+
+    </ros2_control>
+    <xacro:property name="controller_yaml" value="${prefix}_ros2_controller.yaml"/>
+
+    <xacro:property name="controller_yaml_file" value="${prefix}_ros2_controller.yaml"/>
+
+    <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+        <parameters>$(find viperX300_description)/config/${controller_yaml_file}</parameters>
+    </plugin>
+    </gazebo>
+</robot>
