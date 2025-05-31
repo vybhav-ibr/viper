@@ -43,7 +43,7 @@ setup(
     # scripts here.
     entry_points={
         'console_scripts': [
-            'my_script = my_package.my_script:main'
+            'piros = viperX300_descriptio.piros:main'
         ],
     },
 )
