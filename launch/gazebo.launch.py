@@ -42,7 +42,7 @@ def generate_launch_description():
                 'gz_sim.launch.py'
             ])
         ]),
-        launch_arguments={'gz_args': '-r --verbose','use_sim_time': 'true'}.items()
+        launch_arguments={'gz_args': '-v 4 -s --headless-rendering -r --verbose','use_sim_time': 'true'}.items()
     )
     
     gz_ros2_bridge = Node(
