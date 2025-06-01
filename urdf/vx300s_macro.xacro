@@ -42,12 +42,12 @@
 
     <joint name="${prefix}_waist" type="revolute">
       <axis xyz="0 0 1" />
-      <limit effort="10" lower="${-pi + pi_offset}" upper="${pi - pi_offset}" velocity="${pi}" />
+      <limit effort="10" lower="${-pi + pi_offset}" upper="${pi - pi_offset}" velocity="${2*pi}" />
       <origin rpy="0 0 0" xyz="0 0 0.079" />
       <parent link="${prefix}_base_link" />
       <child link="${prefix}_shoulder_link" />
       <!--dynamics friction="0.1" /-->
-      <dynamics damping="5.0" friction="2.5"/>
+      <dynamics damping="0.1" friction="0.1"/>
     </joint>
 
     <link name="${prefix}_shoulder_link">
@@ -78,12 +78,12 @@
 
     <joint name="${prefix}_shoulder" type="revolute">
       <axis xyz="0 1 0" />
-      <limit effort="20" lower="${radians(-106)}" upper="${radians(72)}" velocity="${pi}" />
+      <limit effort="20" lower="${radians(-106)}" upper="${radians(72)}" velocity="${2*pi}" />
       <origin rpy="0 0 0" xyz="0 0 0.04805" />
       <parent link="${prefix}_shoulder_link" />
       <child link="${prefix}_upper_arm_link" />
       <!--dynamics friction="0.1" /-->
-      <dynamics damping="5.0" friction="2.5"/>
+      <dynamics damping="0.1" friction="0.1"/>
     </joint>
 
     <link name="${prefix}_upper_arm_link">
@@ -114,12 +114,12 @@
 
     <joint name="${prefix}_elbow" type="revolute">
       <axis xyz="0 1 0" />
-      <limit effort="15" lower="${radians(-101)}" upper="${radians(92)}" velocity="${pi}" />
+      <limit effort="15" lower="${radians(-101)}" upper="${radians(92)}" velocity="${2*pi}" />
       <origin rpy="0 0 0" xyz="0.05955 0 0.3" />
       <parent link="${prefix}_upper_arm_link" />
       <child link="${prefix}_upper_forearm_link" />
       <!--dynamics friction="0.1" /-->
-      <dynamics damping="5.0" friction="2.5"/>
+      <dynamics damping="0.1" friction="0.1"/>
     </joint>
 
     <link name="${prefix}_upper_forearm_link">
@@ -150,12 +150,12 @@
 
     <joint name="${prefix}_forearm_roll" type="revolute">
       <axis xyz="1 0 0" />
-      <limit effort="2" lower="${-pi + pi_offset}" upper="${pi - pi_offset}" velocity="${pi}" />
+      <limit effort="2" lower="${-pi + pi_offset}" upper="${pi - pi_offset}" velocity="${2*pi}" />
       <origin rpy="0 0 0" xyz="0.2 0 0" />
       <parent link="${prefix}_upper_forearm_link" />
       <child link="${prefix}_lower_forearm_link" />
       <!--dynamics friction="0.1" /-->
-      <dynamics damping="5.0" friction="2.5"/>
+      <dynamics damping="0.1" friction="0.1"/>
     </joint>
 
     <link name="${prefix}_lower_forearm_link">
@@ -183,15 +183,15 @@
           ixz="0" iyz="0" />
       </inertial>
     </link>
-
+    
+    
     <joint name="${prefix}_wrist_angle" type="revolute">
       <axis xyz="0 1 0" />
-      <limit effort="5" lower="${radians(-107)}" upper="${radians(128)}" velocity="${pi}" />
+      <limit effort="5" lower="${radians(-107)}" upper="${radians(128)}" velocity="${2*pi}" />
       <origin rpy="0 0 0" xyz="0.1 0 0" />
       <parent link="${prefix}_lower_forearm_link" />
       <child link="${prefix}_wrist_link" />
-      <!--dynamics friction="0.1" /-->
-      <dynamics damping="5.0" friction="2.5"/>
+      <dynamics damping="0.1" friction="0.1"/>
     </joint>
 
     <link name="${prefix}_wrist_link">
@@ -219,15 +219,15 @@
           ixz="0.0000000023" iyz="0.0000042002" />
       </inertial>
     </link>
+    
 
     <joint name="${prefix}_wrist_rotate" type="revolute">
       <axis xyz="1 0 0" />
-      <limit effort="1" lower="${-pi/2 + pi_offset}" upper="${pi/2 - pi_offset}" velocity="${pi}" />
+      <limit effort="1" lower="${-pi/2 + pi_offset}" upper="${pi/2 - pi_offset}" velocity="${2*pi}" />
       <origin rpy="0 0 0" xyz="0.069744 0 0" />
       <parent link="${prefix}_wrist_link" />
       <child link="${prefix}_gripper_link" />
-      <!--dynamics friction="0.1" /-->
-      <dynamics damping="5.0" friction="2.5"/>
+      <dynamics damping="0.1" friction="0.1"/>
     </joint>
 
     <link name="${prefix}_gripper_link">
@@ -256,25 +256,25 @@
       </inertial>
     </link>
 
-    <joint name="${prefix}_ee_arm" type="fixed">
+    <!--joint name="${prefix}_ee_arm" type="fixed">
       <axis xyz="1 0 0" />
       <origin rpy="0 0 0" xyz="0.042825 0 0" />
       <parent link="${prefix}_gripper_link" />
       <child link="${prefix}_ee_arm_link" />
-    </joint>
+    </joint-->
 
-    <!-- no visual -->
-    <link name="${prefix}_ee_arm_link">
+    <!--link name="${prefix}_ee_arm_link">
       <inertial>
         <mass value="0.001" />
         <inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0" ixz="0" iyz="0" />
       </inertial>
-    </link>
+    </link-->
+
 
     <joint name="${prefix}_gripper_bar" type="fixed">
       <axis xyz="1 0 0" />
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <parent link="${prefix}_ee_arm_link" />
+      <origin rpy="0 0 0" xyz="0.05 0 0" />
+      <parent link="${prefix}_gripper_link" />
       <child link="${prefix}_gripper_bar_link" />
     </joint>
 
@@ -311,7 +311,7 @@
       <child link="${prefix}_fingers_link" />
     </joint>
     
-    <!-- no visual -->
+
     <link name="${prefix}_fingers_link">
       <inertial>
         <mass value="0.001" />
@@ -321,11 +321,11 @@
 
     <joint name="${prefix}_left_finger" type="prismatic">
       <axis xyz="0 1 0" />
-      <limit effort="50" lower="0.021" upper="0.057" velocity="1" />
+      <limit effort="50" lower="0.021" upper="0.057" velocity="2.5" />
       <origin rpy="0 0 0" xyz="0 0 0" />
       <parent link="${prefix}_fingers_link" />
       <child link="${prefix}_left_finger_link" />
-      <dynamics damping="5.0" friction="2.5"/>
+      <dynamics damping="0.1" friction="0.1"/>
 
     </joint>
 
@@ -357,12 +357,11 @@
 
     <joint name="${prefix}_right_finger" type="prismatic">
       <axis xyz="0 1 0" />
-      <limit effort="50" lower="-0.057" upper="-0.021" velocity="1" />
+      <limit effort="50" lower="-0.057" upper="-0.021" velocity="2.5" />
       <origin rpy="0 0 0" xyz="0 0 0" />
       <parent link="${prefix}_fingers_link" />
       <child link="${prefix}_right_finger_link" />
-      <dynamics damping="5.0" friction="2.5"/>
-      <!--mimic joint="${prefix}_left_finger" multiplier="-1" offset="0" /-->
+      <dynamics damping="0.1" friction="0.1"/>
     </joint>
 
     <link name="${prefix}_right_finger_link">
@@ -391,21 +390,90 @@
       </inertial>
     </link>
 
-    <joint name="${prefix}_ee_gripper" type="fixed">
+    <!--joint name="${prefix}_ee_gripper" type="fixed">
       <axis xyz="1 0 0" />
       <origin rpy="0 0 0" xyz="0.0385 0 0" />
       <parent link="${prefix}_fingers_link" />
       <child link="${prefix}_ee_gripper_link" />
     </joint>
 
-    <!-- no visual -->    
+ 
     <link name="${prefix}_ee_gripper_link">
       <inertial>
         <mass value="0.001" />
         <inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0" ixz="0" iyz="0" />
       </inertial>
-    </link>
+    </link-->
+    
+        <!-- Dummy camera link -->
+<link name="${prefix}_CAM_1">
+  <visual>
+    <geometry>
+      <box size="0.05 0.05 0.05"/>
+    </geometry>
+    <material name="interbotix_black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="0.05 0.05 0.05"/>
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="0.1"/>
+    <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+             iyy="0.0001" iyz="0.0"
+             izz="0.0001"/>
+  </inertial>
+</link>
 
+<!-- Joint connecting camera to base_link -->
+<joint name="${prefix}_CAM_joint" type="fixed">
+  <parent link="${prefix}_gripper_bar_link"/>
+  <child link="${prefix}_CAM_1"/>
+  <origin xyz="-0.025 0.0 0.09" rpy="0.0 0.45 0"/>
+</joint>
+    
+    <gazebo reference="${prefix}_CAM_1">
+  <sensor name="${prefix}_zed_CAM" type="camera">
+    <always_on>true</always_on>
+    <update_rate>30</update_rate>
+    <!--pose>0.05 0 0 0 0 0.15</pose-->
+    <visualize>true</visualize>
+    <topic>/${prefix}_cam/image_raw</topic>
+    <gz_frame_id>${prefix}_CAM_1</gz_frame_id>
+    <camera name="${prefix}_zed_CAM">
+      <horizontal_fov>1.047</horizontal_fov>
+      <camera_info_topic>/${prefix}_cam/camera_info</camera_info_topic>
+      <distortion>
+        <k1>0.01</k1>
+        <k2>0.01</k2>
+        <k3>0.01</k3>
+        <p1>0.001</p1>
+        <p2>0.001</p2>
+      </distortion>
+      <image>
+        <width>244</width>
+        <height>244</height>
+        <format>R8G8B8</format>
+      </image>
+      <clip>
+        <near>0.01</near>
+        <far>5.0</far>
+      </clip>
+      <noise>
+        <type>gaussian</type>
+        <mean>0.01</mean>
+        <stddev>0.005</stddev>
+      </noise>
+       <!--depth_camera>
+        <clip>
+          <near>0.01</near>
+          <far>5</far>
+        </clip>
+      </depth_camera-->
+    </camera>
+  </sensor>
+</gazebo>
 
   </xacro:macro>
 </robot>
