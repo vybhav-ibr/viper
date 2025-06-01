@@ -22,13 +22,17 @@
         <xacro:actuated_joints name="${prefix}_waist"/>
         <xacro:actuated_joints name="${prefix}_elbow"/>
         <xacro:actuated_joints name="${prefix}_forearm_roll"/>
+        
         <xacro:actuated_joints name="${prefix}_wrist_angle"/>
         <xacro:actuated_joints name="${prefix}_wrist_rotate"/>
+        
+        <xacro:actuated_joints name="${prefix}_left_finger"/>
+        <xacro:actuated_joints name="${prefix}_right_finger"/>
+        
         <!--xacro:actuated_joints name="${prefix}_ee_arm"/>
         <xacro:actuated_joints name="${prefix}_gripper_bar"/>
         <xacro:actuated_joints name="${prefix}_ee_bar"/-->
-        <xacro:actuated_joints name="${prefix}_left_finger"/>
-        <xacro:actuated_joints name="${prefix}_right_finger"/>
+        
         <!--xacro:actuated_joints name="${prefix}_ee_gripper"/-->
         
         <xacro:macro name="unactuated_joints" params="name">
