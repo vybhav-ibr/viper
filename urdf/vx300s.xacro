@@ -23,5 +23,11 @@
     <child link="$(arg right_prefix)_base_link" />
     <origin xyz="0.4 0 0.7" rpy=" 0 0 1.57"/>
   </joint>
+  
+  <gazebo>
+     		<plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+   			<render_engine>ogre2</render_engine>
+		</plugin>
+	</gazebo>
 
 </robot>
