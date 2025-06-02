@@ -127,7 +127,7 @@ class RospiNode(Node):
         )
 
         # Publishers & timers
-        self.publishers = {}
+        self._control_publishers = {}
         for ctrl in self.config['controllers']:
             self._setup_trajectory_publisher(ctrl)
 
@@ -139,7 +139,7 @@ class RospiNode(Node):
 
     def _setup_trajectory_publisher(self, topic_name: str):
         pub = self.create_publisher(JointTrajectory, topic_name, 10)
-        self.publishers[topic_name] = pub
+        self._control_publishers[topic_name] = pub
 
         # select joint names
         # if "left" in topic_name:
@@ -183,14 +183,15 @@ class RospiNode(Node):
     def act(self, action):
         msg_dict=np_to_joint_trajectory(action,self.config['joints'],self.config['controllers'])
         for ctrl in self.config['controllers']:
-            self.publishers[ctrl].publish(msg_dict[ctrl])
+            self._control_publishers[ctrl].publish(msg_dict[ctrl])
                 
         
 
 # ----- Main Entry Point -----
 
-def main(args: Args):
+def main():
     logging.basicConfig(level=logging.INFO)
+    args=tyro.cli(Args)
     rclpy.init()
     node = RospiNode(args)
     
@@ -218,4 +219,4 @@ def main(args: Args):
 
 if __name__ == "__main__":
     # Parses CLI flags into Args, then hands off to the common main()
-    main(tyro.cli(Args))
+    main()
