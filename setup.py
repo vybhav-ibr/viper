@@ -43,7 +43,7 @@ setup(
     # scripts here.
     entry_points={
         'console_scripts': [
-            'piros = viperX300_descriptio.piros:main'
+            'piros = viperX300_description.piros:main'
         ],
     },
 )
