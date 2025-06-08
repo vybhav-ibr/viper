@@ -36,24 +36,44 @@ class RosAlohaSim(Node):
 
         # Camera subscribers (using lambda)
         self.create_subscription(Image, '/viewer_cam/image_raw', self.viewer_callback, 5)
-        self.create_subscription(Image, '/left_cam_arm/image_raw', lambda msg: setattr(self, 'left_cam_img', msg), 30)
-        self.create_subscription(Image, '/right_cam_arm/image_raw', lambda msg: setattr(self, 'right_cam_img', msg), 30)
-        self.create_subscription(Image, '/high_cam/image_raw', lambda msg: setattr(self, 'high_cam_img', msg), 30)
-        self.create_subscription(Image, '/low_cam/image_raw', lambda msg: setattr(self, 'low_cam_img', msg), 30)
-        self.create_subscription(String, '/prompt', lambda msg: setattr(self, 'prompt', msg), 30)
-        self.create_subscription(JointState, '/joint_states', lambda msg: setattr(self, 'joint_states', msg), 50)
+        # In your class __init__ method:
+        self.create_subscription(Image, '/left_cam_arm/image_raw', self.left_cam_callback, 30)
+        self.create_subscription(Image, '/right_cam_arm/image_raw', self.right_cam_callback, 30)
+        self.create_subscription(Image, '/high_cam/image_raw', self.high_cam_callback, 30)
+        self.create_subscription(Image, '/low_cam/image_raw', self.low_cam_callback, 30)
+        self.create_subscription(String, '/prompt', self.prompt_callback, 30)
+        self.create_subscription(JointState, '/joint_states', self.joint_state_callback, 50)
+
 
         # JointTrajectory publishers
         self.arm_controllers={}
-        self.left_arm_publisher = self.create_publisher(JointTrajectory, '/left_arm/command', 25)
-        self.right_arm_publisher = self.create_publisher(JointTrajectory, '/right_arm/command', 25)
+        self.left_arm_publisher = self.create_publisher(JointTrajectory, '/left_joint_trajectory_controller/joint_trajectory', 25)
+        self.right_arm_publisher = self.create_publisher(JointTrajectory, '/right_joint_trajectory_controller/joint_trajectory', 25)
         self.arm_controllers['left_arm']=self.left_arm_publisher
         self.arm_controllers['right_arm']=self.right_arm_publisher
         
-        self.controller=["left_arm","right_arm"]
+        self.controllers=["left_arm","right_arm"]
 
         self.get_logger().info("Robot Interface Node initialized with lambda subscribers")
-        
+    
+    def left_cam_callback(self, msg):
+        self.left_cam_img = msg
+
+    def right_cam_callback(self, msg):
+        self.right_cam_img = msg
+
+    def high_cam_callback(self, msg):
+        self.high_cam_img = msg
+
+    def low_cam_callback(self, msg):
+        self.low_cam_img = msg
+
+    def prompt_callback(self, msg):
+        self.prompt = msg
+
+    def joint_state_callback(self, msg):
+        self.joint_states = msg
+    
     def viewer_callback(self, msg):
         try:
             # Convert ROS image to OpenCV image
@@ -81,10 +101,10 @@ class RosAlohaSim(Node):
             self.arm_controllers[controller].publish(traj)
             self.get_logger().info("Published arm trajectory")
             
-    def joint_state_to_np(self):
+    def joint_state_to_np(self,joint_states):
         try:
             mappings=[5,4,0,1,6,7,2,13,12,8,9,14,15,10]
-            orderred_positins=[self.joint_states.position[i] for i in mappings]
+            orderred_positins=[joint_states.position[i] for i in mappings]
             return np.array(orderred_positins, dtype=np.float32)
         except Exception as e:
             self.get_logger().error(f"[JointState Conversion Failed] {e}")
@@ -92,7 +112,7 @@ class RosAlohaSim(Node):
     
     def img_msg_to_np(self,msg: Image, encoding: str = 'bgr8') -> np.ndarray:
         try:
-            return self.bridge.imgmsg_to_cv2(msg, desired_encoding=encoding)
+            return self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8').astype(np.uint8).transpose(2, 0, 1)
         except Exception as e:
             self.get_logger().error(f"[Image Conversion Failed] {e}")
             return None
@@ -101,12 +121,12 @@ class RosAlohaSim(Node):
         return {
             "state": self.joint_state_to_np(self.joint_states),
             "images": {
-                "left_cam":self.img_msg_to_np(self.left_cam_img),
-                "right_cam":self.img_msg_to_np(self.right_cam_img),
-                "high_cam":self.img_msg_to_np(self.high_cam_img),
-                "low_cam":self.img_msg_to_np(self.low_cam_img)
+                "cam_left_wrist": self.img_msg_to_np(self.left_cam_img),
+                "cam_right_wrist": self.img_msg_to_np(self.right_cam_img),
+                "cam_high": self.img_msg_to_np(self.high_cam_img),
+                "cam_low": self.img_msg_to_np(self.low_cam_img)
                 },
-            "prompt": self.prompt,
+            "prompt": str(self.prompt),
         }
     
     def log(self,log_msg):

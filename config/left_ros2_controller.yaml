@@ -3,7 +3,7 @@ controller_manager:
     update_rate: 1000
 left_joint_trajectory_controller:
   ros__parameters:
-    type:  joint_trajectory_controller/JointTrajectoryController
+    type: position_controllers/JointGroupPositionController 
     joints:
       - left_waist
       - left_shoulder

@@ -42,7 +42,7 @@ def generate_launch_description():
                 'gz_sim.launch.py'
             ])
         ]),
-        launch_arguments={'gz_args': '-v 4 -s --headless-rendering -r --verbose','use_sim_time': 'true'}.items()
+        launch_arguments={'gz_args': '-v 4 -s --headless-rendering -r --verbose empty.sdf','use_sim_time': 'true'}.items()
     )
     
     gz_ros2_bridge = Node(
@@ -50,9 +50,10 @@ def generate_launch_description():
         executable="parameter_bridge",
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock', '/world/default/model/Example/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model', 
                    '/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
-                  '/left_cam/image_raw@sensor_msgs/msg/Image[gz.msgs.Image', '/top_cam/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
-                  '/right_cam/image_raw@sensor_msgs/msg/Image[gz.msgs.Image', '/right_cam/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
-                  '/top_cam/image_raw@sensor_msgs/msg/Image[gz.msgs.Image', '/top_cam/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',]
+                  '/left_cam_arm/image_raw@sensor_msgs/msg/Image[gz.msgs.Image', '/left_cam_arm/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
+                  '/right_cam_arm/image_raw@sensor_msgs/msg/Image[gz.msgs.Image', '/right_cam_arm/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
+                  '/high_cam/image_raw@sensor_msgs/msg/Image[gz.msgs.Image', '/high_cam/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
+                  '/low_cam/image_raw@sensor_msgs/msg/Image[gz.msgs.Image', '/low_cam/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',]
         )
     # Spawn entity in Gazebo Sim
     spawn_entity = Node(
@@ -76,6 +77,7 @@ def generate_launch_description():
     
     left_joint_trajectory_controller_spawner = Node(
         package='controller_manager',
+        name='ljtc',
         executable='spawner',
         arguments=[
             'left_joint_trajectory_controller',
@@ -86,6 +88,7 @@ def generate_launch_description():
 
     left_joint_state_broadcaster_spawner = Node(
         package='controller_manager',
+        name='ljsb',
         executable='spawner',
         arguments=[
             'left_joint_state_broadcaster',
@@ -105,6 +108,7 @@ def generate_launch_description():
     right_joint_trajectory_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
+        name='rjtc',
         arguments=[
             'right_joint_trajectory_controller',
             '--param-file',
@@ -115,6 +119,7 @@ def generate_launch_description():
     right_joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
+        name='rjsb',
         arguments=[
             'right_joint_state_broadcaster',
             '--param-file',
