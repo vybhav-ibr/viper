@@ -11,23 +11,63 @@
   <xacro:vx300s prefix="$(arg right_prefix)" hw_interface="hardware_interface/EffortJointInterface" />
 
   <link name="world" />
+  
+  <link name="table">
+    <visual>
+      <origin xyz="0 0 0.0125" rpy="0 0 0"/>
+      <geometry>
+        <box size="1.22 0.7 0.025"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1.0 1.0 1.0 1.0"/>
+      </material>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0.0125" rpy="0 0 0"/>
+      <geometry>
+        <box size="1.22 0.7 0.05"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0.0125" rpy="0 0 0"/>
+      <mass value="5.0"/>
+      <inertia ixx="0.1" ixy="0.0" ixz="0.0"
+               iyy="0.1" iyz="0.0"
+               izz="0.1"/>
+    </inertial>
+  </link>
+  
+  <joint name="table_to_world" type="fixed">
+    <parent link="world" />
+     <child link="table" />
+    <origin xyz="0 0 0" rpy=" 0 0 0"/>
+  </joint>
 
   <joint name="$(arg left_prefix)_to_world" type="fixed">
-    <parent link="world" />
+    <parent link="table" />
     <child link="$(arg left_prefix)_base_link" />
-    <origin xyz="-0.4 0 0.7" rpy=" 0 0 1.57"/>
+    <origin xyz="-0.6 0 0.025" rpy=" 0 0 0"/>
   </joint>
 
   <joint name="$(arg right_prefix)_to_world" type="fixed">
-    <parent link="world" />
+    <parent link="table" />
     <child link="$(arg right_prefix)_base_link" />
-    <origin xyz="0.4 0 0.7" rpy=" 0 0 1.57"/>
+    <origin xyz="0.6 0 0.025" rpy=" 0 0 -3.14"/>
   </joint>
   
   <gazebo>
      		<plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
    			<render_engine>ogre2</render_engine>
 		</plugin>
+		<plugin filename="gz-sim-pose-publisher-system" name="gz::sim::systems::PosePublisher">
+           <publish_link_pose>true</publish_link_pose>
+           <publish_nested_model_pose>true</publish_nested_model_pose>
+           <use_pose_vector_msg>false</use_pose_vector_msg>
+           <static_publisher>true</static_publisher>
+           <static_update_frequency>1</static_update_frequency>
+        </plugin>
 	</gazebo>
 
 <link name="high_CAM_1">
@@ -54,14 +94,14 @@
 <joint name="high_CAM_joint" type="fixed">
   <parent link="world"/>
   <child link="high_CAM_1"/>
-  <origin xyz="0.0 0.0 0.8" rpy="0.0 0.0 0"/>
+  <origin xyz="0.0 -0.2 1.2" rpy="0.0 1.57 0.0"/>
 </joint>
     
     <gazebo reference="high_CAM_1">
   <sensor name="high_zed_CAM" type="camera">
     <always_on>true</always_on>
-    <update_rate>25</update_rate>
-    <!--pose>0.05 0 0 0 0 0.15</pose-->
+    <update_rate>50</update_rate>
+    <pose>0 0 0 0 0 0</pose>
     <visualize>true</visualize>
     <topic>/high_cam/image_raw</topic>
     <gz_frame_id>high_CAM_1</gz_frame_id>
@@ -76,8 +116,8 @@
         <p2>0.001</p2>
       </distortion>
       <image>
-        <width>224</width>
-        <height>224</height>
+        <width>640</width>
+        <height>480</height>
         <format>R8G8B8</format>
       </image>
       <clip>
@@ -99,6 +139,7 @@
   </sensor>
 </gazebo>
 
+<!--
 <link name="low_CAM_1">
   <visual>
     <geometry>
@@ -119,7 +160,6 @@
   </inertial>
 </link>
 
-<!-- Joint connecting camera to base_link -->
 <joint name="low_CAM_joint" type="fixed">
   <parent link="world"/>
   <child link="low_CAM_1"/>
@@ -130,7 +170,6 @@
   <sensor name="low_zed_CAM" type="camera">
     <always_on>true</always_on>
     <update_rate>25</update_rate>
-    <!--pose>0.05 0 0 0 0 0.15</pose-->
     <visualize>true</visualize>
     <topic>/low_cam/image_raw</topic>
     <gz_frame_id>low_CAM_1</gz_frame_id>
@@ -158,14 +197,9 @@
         <mean>0.01</mean>
         <stddev>0.005</stddev>
       </noise>
-       <!--depth_camera>
-        <clip>
-          <near>0.01</near>
-          <far>5</far>
-        </clip>
-      </depth_camera-->
     </camera>
   </sensor>
 </gazebo>
+-->
 
 </robot>

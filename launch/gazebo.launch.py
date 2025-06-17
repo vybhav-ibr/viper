@@ -42,18 +42,23 @@ def generate_launch_description():
                 'gz_sim.launch.py'
             ])
         ]),
-        launch_arguments={'gz_args': '-v 4 -s --headless-rendering -r --verbose empty.sdf','use_sim_time': 'true'}.items()
+        launch_arguments={'gz_args': 'empty.sdf -v 4 -r --verbose','use_sim_time': 'true'}.items()
     )
     
     gz_ros2_bridge = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock', '/world/default/model/Example/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model', 
+                   '/world/default/pose/info@geometry_msgs/msg/PoseStamped[gz.msgs.Pose',
                    '/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
                   '/left_cam_arm/image_raw@sensor_msgs/msg/Image[gz.msgs.Image', '/left_cam_arm/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
                   '/right_cam_arm/image_raw@sensor_msgs/msg/Image[gz.msgs.Image', '/right_cam_arm/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
                   '/high_cam/image_raw@sensor_msgs/msg/Image[gz.msgs.Image', '/high_cam/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
-                  '/low_cam/image_raw@sensor_msgs/msg/Image[gz.msgs.Image', '/low_cam/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',]
+                  '/low_cam/image_raw@sensor_msgs/msg/Image[gz.msgs.Image', '/low_cam/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo', 
+                  '/model/vx300s/pose@geometry_msgs/msg/Pose[gz.msgs.Pose',
+                  '/model/box/pose@geometry_msgs/msg/Pose[gz.msgs.Pose',
+                  '/world/empty/create@ros_gz_interfaces/srv/SpawnEntity',
+        	  '/world/empty/remove@ros_gz_interfaces/srv/DeleteEntity'],
         )
     # Spawn entity in Gazebo Sim
     spawn_entity = Node(
@@ -126,13 +131,24 @@ def generate_launch_description():
             right_robot_controllers,
         ],
     )
+    
+    transfer_cube_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory('viperX300_description'),
+                'launch',
+                'transfer_cube.launch.py'
+            )
+        )
+    )
 
     return LaunchDescription([
         robot_state_publisher_node,
-        joint_state_publisher_node,
+        #joint_state_publisher_node,
         gazebo_sim,
         gz_ros2_bridge,
         spawn_entity,
+        transfer_cube_launch,
         left_joint_state_broadcaster_spawner,
         left_joint_trajectory_controller_spawner,
         right_joint_state_broadcaster_spawner,
